@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const schema = z.object({
 	OPENAI_API_KEY: z.string().min(1, "OPENAI_API_KEY is required"),
+	SERP_API_KEY: z.string().min(1, "SERPER_API_KEY is required"),
 });
 
 function validateEnv() {

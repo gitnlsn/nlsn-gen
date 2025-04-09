@@ -3,6 +3,7 @@ import {
 	type InputOutputTestingToolOutput,
 	inputOutputTestingTool,
 } from "../../tools/input-output-testing-tool/InputOutputTestingTool";
+import { executeFunction } from "../../utils/eval/executeFunction";
 import { codeOutputSchema, codingAgent } from "./coding-agent";
 
 describe("Coding Agent with Input/Output Testing", () => {
@@ -107,5 +108,63 @@ describe("Coding Agent with Input/Output Testing", () => {
 
 		expect(testResult.success).toBe(true);
 		expect(testResult.errors).toHaveLength(0);
+	}, 30000);
+
+	it("should recognize pattern from test cases without explicit algorithm name", async () => {
+		// Generate the code using the coding agent with just pattern examples
+		const response = await codingAgent.generate(
+			[
+				{
+					role: "user",
+					content: `Write a function called 'sequenceGenerator' that produces the correct output for the following input/output pairs:
+						
+						const testCases = [
+							{ input: 0, expected: 0 },
+							{ input: 1, expected: 1 },
+							{ input: 2, expected: 1 },
+							{ input: 3, expected: 2 },
+							{ input: 4, expected: 3 },
+							{ input: 5, expected: 5 },
+							{ input: 6, expected: 8 },
+							{ input: 10, expected: 55 },
+							{ input: 12, expected: 144 },
+						];
+
+						Inside the code, don't explain the code, just return the function.
+						Inside the explanation, explain what the function does.
+						Inside language, return "javascript".
+						`,
+				},
+			],
+			{
+				output: codeOutputSchema,
+				maxSteps: 3,
+			},
+		);
+
+		expect(response.object.code).toBeDefined();
+		expect(response.object.explanation).toBeDefined();
+
+		console.log("code", response.object.code);
+		console.log("explanation", response.object.explanation);
+
+		const testCases = [
+			{ input: 0, expected: 0 },
+			{ input: 1, expected: 1 },
+			{ input: 2, expected: 1 },
+			{ input: 3, expected: 2 },
+			{ input: 4, expected: 3 },
+			{ input: 5, expected: 5 },
+			{ input: 6, expected: 8 },
+			{ input: 10, expected: 55 },
+			{ input: 12, expected: 144 },
+		];
+
+		for (const { input, expected } of testCases) {
+			const result = await executeFunction(response.object.code, {
+				args: [input],
+			});
+			expect(result).toBe(expected);
+		}
 	}, 30000);
 });
