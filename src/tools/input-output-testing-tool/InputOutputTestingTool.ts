@@ -2,6 +2,11 @@ import { createTool } from "@mastra/core";
 import { z } from "zod";
 import { executeAssert } from "../../utils/eval/executeAssert";
 
+export interface InputOutputTestingToolOutput {
+	success: boolean;
+	errors: string[];
+}
+
 export const inputOutputTestingTool = createTool({
 	id: "Input Output Testing",
 	description:
@@ -27,7 +32,7 @@ export const inputOutputTestingTool = createTool({
 			),
 	}),
 
-	execute: async ({ context }) => {
+	execute: async ({ context }): Promise<InputOutputTestingToolOutput> => {
 		const { implementation, testCases, timeout = 5000 } = context;
 		const errors: string[] = [];
 
@@ -43,9 +48,9 @@ export const inputOutputTestingTool = createTool({
 					if (error instanceof Error) {
 						errors.push(
 							`Falha no caso de teste ${index + 1}:
-               Input: ${JSON.stringify(testCase.input)}
-               Expected: ${JSON.stringify(testCase.expected)}
-               Error: ${error.message}`,
+							Input: ${JSON.stringify(testCase.input)}
+							Expected: ${JSON.stringify(testCase.expected)}
+							Error: ${error.message}`,
 						);
 					}
 				}

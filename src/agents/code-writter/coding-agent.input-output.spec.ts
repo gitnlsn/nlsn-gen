@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { inputOutputTestingTool } from "../../tools/input-output-testing-tool/InputOutputTestingTool";
+import {
+	type InputOutputTestingToolOutput,
+	inputOutputTestingTool,
+} from "../../tools/input-output-testing-tool/InputOutputTestingTool";
 import { codeOutputSchema, codingAgent } from "./coding-agent";
 
 describe("Coding Agent with Input/Output Testing", () => {
@@ -37,27 +40,31 @@ describe("Coding Agent with Input/Output Testing", () => {
 			{ input: 10, expected: 55 },
 		];
 
+		if (!inputOutputTestingTool.execute) {
+			throw new Error("InputOutputTestingTool is not defined");
+		}
+
 		// Test the implementation using the InputOutputTestingTool
-		const testResult = await inputOutputTestingTool.execute({
+		const testResult = (await inputOutputTestingTool.execute({
 			context: {
 				implementation: response.object.code,
 				testCases,
 				timeout: 5000,
 			},
-		});
+		})) as InputOutputTestingToolOutput;
 
 		// Verify the test results
 		expect(testResult.success).toBe(true);
 		expect(testResult.errors).toHaveLength(0);
 
 		// Test with an invalid implementation to ensure the tool catches errors
-		const invalidResult = await inputOutputTestingTool.execute({
+		const invalidResult = (await inputOutputTestingTool.execute({
 			context: {
 				implementation: "function fibonacci(n) { return n; }", // Wrong implementation
 				testCases: testCases.slice(0, 3), // Test only first 3 cases
 				timeout: 5000,
 			},
-		});
+		})) as InputOutputTestingToolOutput;
 
 		// Verify that the tool catches the invalid implementation
 		expect(invalidResult.success).toBe(false);
@@ -86,13 +93,17 @@ describe("Coding Agent with Input/Output Testing", () => {
 			{ input: 1, expected: 1 },
 		];
 
-		const testResult = await inputOutputTestingTool.execute({
+		if (!inputOutputTestingTool.execute) {
+			throw new Error("InputOutputTestingTool is not defined");
+		}
+
+		const testResult = (await inputOutputTestingTool.execute({
 			context: {
 				implementation: response.object.code,
 				testCases: edgeCases,
 				timeout: 5000,
 			},
-		});
+		})) as InputOutputTestingToolOutput;
 
 		expect(testResult.success).toBe(true);
 		expect(testResult.errors).toHaveLength(0);

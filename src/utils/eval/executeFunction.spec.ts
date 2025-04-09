@@ -4,10 +4,10 @@ import { executeFunction } from "./executeFunction";
 describe("executeFunction", () => {
 	it("deve executar função com argumentos string e number corretamente", async () => {
 		const fnString = `
-      function(texto, numero) {
-        return texto + ' ' + numero;
-      }
-    `;
+			function(texto, numero) {
+				return texto + ' ' + numero;
+			}
+			`;
 
 		const resultado = await executeFunction(fnString, {
 			args: ["Teste", 42],
@@ -18,16 +18,16 @@ describe("executeFunction", () => {
 
 	it("deve executar função com múltiplos tipos de argumentos e contexto", async () => {
 		const fnString = `
-      function(texto, numero) {
-        return texto + ' ' + numero + ' ' + this.prefixo;
-      }
-    `;
+			function(texto, numero) {
+				return this.prefixo + texto + ' ' + numero;
+			}
+			`;
 
 		const resultado = await executeFunction(fnString, {
 			context: { prefixo: "Resultado:" },
 			args: ["Teste", 42],
 		});
 
-		expect(resultado).toBe("Teste 42 Resultado:");
+		expect(resultado).toBe("Resultado:Teste 42");
 	});
 });

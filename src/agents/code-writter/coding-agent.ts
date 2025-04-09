@@ -16,7 +16,7 @@ export const codingAgent = new Agent({
 	name: "Coding Assistant",
 	instructions: `You are an expert programming assistant that helps generate and explain code.
     - Write clean, well-documented, and efficient code
-    - Provide clear explanations of how the code worksx
+    - Provide clear explanations of how the code works
     - include comments to explain the code when necessary
     - Follow best practices and conventions for each programming language
     - Consider edge cases and error handling

@@ -1,3 +1,4 @@
+import { mkdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { executeFunction } from "./executeFunction";
 
@@ -9,6 +10,23 @@ describe("executeFunction", () => {
 				f: () => "hello world",
 			},
 		});
+
+		// Assert
+		expect(resultado).toBe("hello world");
+	});
+});
+
+describe("execute mkdir", () => {
+	it("deve criar um diretório", async () => {
+		// Act
+		const resultado = await executeFunction(
+			"function() { mkdirSync('./hello world') }",
+			{
+				context: {
+					mkdirSync,
+				},
+			},
+		);
 
 		// Assert
 		expect(resultado).toBe("hello world");

@@ -20,7 +20,7 @@ export async function executeFunction(
 	fnString: string,
 	options: VMFunctionOptions = {},
 ) {
-	const { context = {}, timeout = 5000, args = [] } = options;
+	const { context = { fetch }, timeout = 5000, args = [] } = options;
 
 	// Create a sandbox with the base context merged with custom context
 	const sandbox = {
